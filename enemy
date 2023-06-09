@@ -1,0 +1,54 @@
+import pygame
+from constantes import *
+
+
+class Enemy:
+    def __init__(self, x, y, lista_proyectiles, movimiento_y, max_disparos):
+        self.image = pygame.image.load("imagenes/nave_enemiga5.png")
+        self.image = pygame.transform.scale(self.image, (60, 55))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.centery = y
+        self.velocidad = movimiento_y
+        self.lista_proyectil_enemy = lista_proyectiles
+        self.max_disparos = max_disparos
+
+    def update_enemy(self):
+        self.rect.y += self.velocidad
+        for proyectil in self.lista_proyectil_enemy:
+            proyectil.update_disparo_enemigo()
+        
+
+    def draw_enemy(self, pantalla):
+        pantalla.blit(self.image, self.rect)
+        for proyectil in self.lista_proyectil_enemy:
+            proyectil.draw_disparo_enemigo(pantalla)
+
+    def shot_enemy(self):
+        if len(self.lista_proyectil_enemy) < self.max_disparos:
+            proyectil_enemy = Disparos_enemy(self.rect.centerx, self.rect.bottom, 2)
+            self.lista_proyectil_enemy.append(proyectil_enemy)
+
+    # def actualizar_disparos(self):
+    #     for proyectil in self.lista_proyectil_enemy:
+    #         proyectil.update_disparo_enemigo()
+
+    #     # Eliminar los disparos que salen de la pantalla
+    #     self.lista_proyectil_enemy = [
+    #         disparo for disparo in self.lista_proyectil_enemy if disparo.rect.bottom >= 0]
+
+
+class Disparos_enemy:
+    def __init__(self, x, y, velocidad):
+        self.image = pygame.image.load("imagenes/misil_enemigo.png")
+        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.centery = y
+        self.velocidad = velocidad
+
+    def update_disparo_enemigo(self):
+        self.rect.y += self.velocidad
+
+    def draw_disparo_enemigo(self, pantalla):
+        pantalla.blit(self.image, self.rect)
