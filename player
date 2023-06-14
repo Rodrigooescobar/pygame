@@ -13,7 +13,7 @@ class Player ():
         self.rect.centerx = ANCHO_VENTANA / 2
         self.rect.bottom = ALTO_VENTANA
         self.mejorar_tiro = mejorar_tiro
-        self.score = score
+        #self.score = score
         self.lista_proyectil_player = lista_proyectiles
 
     def update_player(self, velocidad):
@@ -32,10 +32,10 @@ class Player ():
 
 
     def shot_player (self):
-        if self.score < self.mejorar_tiro:
+        if self.game.score < self.mejorar_tiro:
             proyectil_player = Disparos_player(self.rect.centerx, self.rect.top, 0, -5)
             self.lista_proyectil_player.append(proyectil_player)
-        elif self.score >= self.mejorar_tiro:
+        elif self.game.score >= self.mejorar_tiro:
             proyectil_player = Disparos_player(self.rect.centerx, self.rect.top, 0, -4)
             proyectil_dig_izq = Disparos_player(self.rect.x, self.rect.top, -1, -4)
             proyectil_dig_der = Disparos_player(self.rect.right, self.rect.top, 1, -4)
