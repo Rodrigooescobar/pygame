@@ -1,13 +1,13 @@
 import pygame
 import sys
 import colores
+import random
+from constantes import *
+from intro import Intro_game
 from player import *
 from enemy import *
-from constantes import *
 from colisiones import *
 
-
-SHOT_ENEMY = pygame.USEREVENT + 1
 
 class Game:
     def __init__(self) -> None:
@@ -17,12 +17,21 @@ class Game:
        self.fondo = pygame.transform.scale(
            self.fondo, (ANCHO_VENTANA, ALTO_VENTANA))
        self.rect_fondo = self.fondo.get_rect()
+       self.fps = FPS
        self.gameover = True
        self.score = 0
-       self.fps = FPS
-       pygame.mixer.music.load("music/stranger.wav")
-       pygame.mixer.music.play(-1)
-       
+       self.temporizador = 0
+       self.timer_shot_enemy = pygame.USEREVENT  
+       self.event_temporizador = pygame.USEREVENT
+       self.new_game()
+       self.mostrar_intro()       
+    #    pygame.mixer.music.load("music/stranger.wav")
+    #    pygame.mixer.music.play(-1)
+
+    def mostrar_intro (self):
+        intro_game = Intro_game(self.pantalla)
+        intro_game.run()
+        #self.new_game()
 
     def eventos(self):
         lista_eventos = pygame.event.get()
@@ -34,55 +43,69 @@ class Game:
             elif evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     self.player.shot_player()
-                    pygame.time.set_timer(SHOT_ENEMY, 100)
-                    self.fps = 10
-                    for enemy in self.lista_enemy:
-                        enemy.shot_enemy(self.lista_proyectil_enemy)
+
+            elif evento.type == self.event_temporizador:
+                self.timer -= 1
+            if evento.type == self.timer_shot_enemy:
+                for enemy in self.lista_enemy:
+                    if random.random() < 0.1:
+                        enemy.shot_enemy()
+                        #print("disparo enemigo")
                     
     
     def new_game(self):
+        pygame.time.set_timer(self.timer_shot_enemy, 600)
+        pygame.time.set_timer(self.event_temporizador, 1000)
+        self.timer = 50
         self.score = 0
         self.lista_proyectil_player = []
-        self.player = Player(self, 1500, self.score, self.lista_proyectil_player)
+        self.player = Player(self, 1000, self.score, self.lista_proyectil_player)
         self.lista_proyectil_enemy = []
-        self.lista_enemy = Enemy.crear_lista_ovnis(self, 1, 5, 80, 100, 100, 0, 400, self.lista_proyectil_enemy)
-        self.colisiones = Colisiones(self.player, self.lista_proyectil_player, self.lista_enemy, self.lista_proyectil_enemy, self.score)
+        self.lista_enemy = Enemy.crear_lista_ovnis(self, 2, 14, 80, 100, 100, 0, 10, self.lista_proyectil_enemy)
         # self.enemigos = Enemy(0, 0, 0, 0, [], [])
         # self.lista_enemy = self.enemigos.crear_lista_ovnis(
-        #     5, 2, 80, 100, 100, 0, 20, self.lista_proyectil_enemy)
+        #     2, 5, 80, 100, 100, 0, 20, self.lista_proyectil_enemy)
+        self.colisiones = Colisiones(self.player, self.lista_proyectil_player, self.lista_enemy, self.lista_proyectil_enemy, self.score)
         
 
     def draw(self):
         self.pantalla.blit(self.fondo, self.rect_fondo)
-        self.pantalla.blit(self.texto, (10, 10))
+        self.pantalla.blit(self.puntos, (10, 10))
+        self.pantalla.blit(self.temporizador, (ANCHO_VENTANA/2-60, 10))
         self.player.draw_player(self.pantalla)
+        
         for enemy in self.lista_enemy:
             enemy.draw_enemy(self.pantalla)
-        #pygame.draw.rect(self.pantalla, (255, 0, 0), self.player.rect_player)
+            enemy.update_enemy()
 
-        # for proyectil in enemy.lista_proyectil_enemy:
-        #     proyectil.draw_disparo_enemigo(self.pantalla)
+        for proyectil_enemy in self.lista_proyectil_enemy:
+            proyectil_enemy.draw_disparo_enemigo(self.pantalla)
+            proyectil_enemy.update_disparo_enemigo(self.lista_proyectil_enemy)
+            #print(len(self.lista_proyectil_enemy))
+
+            
 
     def update(self):
         self.player.update_player(5)
-        for enemy in self.lista_enemy:
-            enemy.update_enemy()
-        #self.colisiones.verificar_colisiones()
+        
             
         
 
     def actualizar_pantalla(self):
-        self.font = pygame.font.SysFont("Arial", 30)
-        self.texto = self.font.render(
-            "SCORE: {0}".format(self.score), True, colores.WHITE)
-        self.score = self.colisiones.verificar_colisiones()
+        self.font = pygame.font.SysFont("Arial", 30)        
+        self.puntos = self.font.render(
+            "SCORE: {0}".format(self.score), True, colores.WHITE)        
+        self.score = self.colisiones.verificar_colisiones(self.score)
+        self.temporizador = self.font.render(
+            "TIME: {0}".format(self.timer), True, colores.WHITE)
+        
         
 
 
 
     def run(self):
         self.clock = pygame.time.Clock()
-        self.new_game()
+        #self.new_game()
         while self.gameover:
             self.clock.tick(FPS)
             self.eventos()
