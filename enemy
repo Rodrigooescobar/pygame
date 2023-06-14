@@ -17,23 +17,21 @@ class Enemy:
 
     def update_enemy(self):
         self.rect.y += self.movimiento_y
-        for proyectil in self.lista_proyectil_enemy:
-            proyectil.update_disparo_enemigo(self.lista_proyectil_enemy)
+        #for proyectil in self.lista_proyectil_enemy:
+   
 
-        
-        
     def draw_enemy(self, pantalla):
         pantalla.blit(self.image, self.rect)
-        for proyectil in self.lista_proyectil_enemy:
-            proyectil.draw_disparo_enemigo(pantalla)
+        
+            
 
         # for enemy in self.lista_enemy:
         #     enemy.draw_enemy(pantalla)
         
-    def shot_enemy(self, lista_proyectil_enemy):
+    def shot_enemy(self):
         if len(self.lista_proyectil_enemy) < self.max_disparos:
             proyectil_enemy = Disparos_enemy(self.rect.centerx, self.rect.bottom, 1)
-            lista_proyectil_enemy.append(proyectil_enemy)
+            self.lista_proyectil_enemy.append(proyectil_enemy)
 
     # def actualizar_disparos(self):
     #     for proyectil in self.lista_proyectil_enemy:
@@ -67,10 +65,13 @@ class Disparos_enemy:
         self.rect.centery = y
         self.movimiento_y = movimiento_y
 
+
     def update_disparo_enemigo(self, lista_balas_enemigas):
-        self.rect.y += self.movimiento_y
+        self.rect.y += 5
+
         if self.rect.bottom > ALTO_VENTANA or self.rect.right < 0 or self.rect.left > ANCHO_VENTANA:
             lista_balas_enemigas.remove(self)
-
+            #print(len(lista_balas_enemigas))
+            
     def draw_disparo_enemigo(self, pantalla):
         pantalla.blit(self.image, self.rect)
