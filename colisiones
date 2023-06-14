@@ -12,23 +12,19 @@ class Colisiones:
         self.score = score
         self.score = 0
 
-    def verificar_colisiones(self):
+    def verificar_colisiones(self, score):
         # Colisiones entre las balas del jugador y los enemigos
         for bala in self.balas_player:
             for enemy in self.enemy:
                 if bala.rect.colliderect(enemy.rect):
-                    # Aquí puedes realizar las acciones correspondientes cuando hay una colisión
-                    #self.player.incrementar_puntaje()
                     self.enemy.remove(enemy)
                     self.balas_player.remove(bala)
-            #         score += 100
-            #         print(type(score))
-            # return score
-
-    
+                    score += 100     
         #if hasattr(self.player, 'rect'):
         for bala in self.balas_enemy:
-            if bala.rect.colliderect(self.player):
-                    self.balas_enemy.remove(bala)
+            if bala.rect.colliderect(self.player):    
+                self.balas_enemy.remove(bala)
+        return score
+
 
     
