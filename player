@@ -1,10 +1,11 @@
 import pygame
-from constantes import *
+from configuracion import *
 from disparo_player import *
+from game_over import GameOver
 
 
 class Player ():
-    def __init__(self, game, mejorar_tiro, score, lista_proyectiles) -> None:
+    def __init__(self, game, mejorar_tiro, vida, lista_proyectiles) -> None:
         self.game = game  # para tener accseso a las variables de Game
         self.imagen_player = pygame.image.load(
             "imagenes/nave_espacial5.png")  # imagen de la nave
@@ -13,11 +14,15 @@ class Player ():
         self.rect.centerx = ANCHO_VENTANA / 2
         self.rect.bottom = ALTO_VENTANA
         self.mejorar_tiro = mejorar_tiro
-        #self.score = score
+        self.vidas = vida
         self.lista_proyectil_player = lista_proyectiles
 
     def update_player(self, velocidad):
         self.speed_x = 0
+        if self.vidas <= 0:
+            self.vidas = 0
+            self.game.gameover = False
+            game_over = GameOver(self.game.pantalla, self.game)
         izq_der = pygame.key.get_pressed()
         if izq_der[pygame.K_RIGHT] and self.rect.right < ANCHO_VENTANA:
             self.speed_x += velocidad
@@ -42,9 +47,17 @@ class Player ():
             self.lista_proyectil_player.extend([proyectil_dig_der, proyectil_dig_izq])
             self.lista_proyectil_player.append(proyectil_player)
 
-    def draw_player (self, pantalla):
+    def draw_player(self, pantalla):
         pantalla.blit(self.imagen_player, self.rect)
         for proyectil in self.lista_proyectil_player:
             proyectil.draw_disparo_player(pantalla)
+        font = pygame.font.SysFont("Arial", 24)
+        vidas_texto = font.render(f"Vidas: {self.vidas}", True, colores.WHITE)
+        vidas_rect = vidas_texto.get_rect()
+        vidas_rect.topright = (ANCHO_VENTANA - 10, 10)
+        pantalla.blit(vidas_texto, vidas_rect)
+
+
+
         
 
