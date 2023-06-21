@@ -26,6 +26,9 @@ class Colisiones:
             if enemy.rect.colliderect(self.player.rect):
                 self.enemy.remove(enemy)
                 self.player.vidas = 0
+                if enemy.rect.bottom >= ALTO_VENTANA:
+                    self.enemy.remove(enemy)
+                    self.player.vidas = 0
 
         # Colisiones entre las balas enemigas y el jugador
         #if hasattr(self.player, 'rect'):
