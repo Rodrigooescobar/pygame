@@ -45,7 +45,7 @@ class Intro_game:
             with open("./juego2/datos.json", "r") as archivo_json:
                 self.ranking = json.load(archivo_json)
         except json.JSONDecodeError:
-            #print("El archivo JSON está vacío.")
+            #print("El archivo JSON esta vacio.")
             self.ranking = []
         except FileNotFoundError:
             print("La lista no existe y se creo una nueva.")
