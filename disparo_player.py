@@ -1,0 +1,24 @@
+import pygame
+from configuracion import *
+
+class Disparos_player ():
+    def __init__(self, x, y, direccion, velocidad) -> None:
+        self.image = pygame.image.load("imagenes/misil_mio.png")
+        self.image = pygame.transform.scale(self.image, (30, 30))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.y = y
+        self.velocidad = velocidad
+        self.direccion = direccion
+        self.sonido = pygame.mixer.Sound("music/disparo.wav")
+        self.sonido.play()
+
+    def update_disparo_player(self, lista_balas):
+        self.rect.y += self.velocidad
+        self.rect.x += self.direccion
+        #al salir de la pantalla se eliminen las balas
+        if self.rect.bottom < 0 or self.rect.right < 0 or self.rect.left > ANCHO_VENTANA:
+            lista_balas.remove(self)
+
+    def draw_disparo_player(self, pantalla):
+        pantalla.blit(self.image, self.rect)
