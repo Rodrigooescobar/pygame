@@ -10,8 +10,8 @@ class Disparos_player ():
         self.rect.y = y
         self.velocidad = velocidad
         self.direccion = direccion
-        self.sonido = pygame.mixer.Sound("music/disparo.wav")
-        self.sonido.play()
+        #self.sonido = pygame.mixer.Sound("music/disparo.wav")
+        #self.sonido.play()
 
     def update_disparo_player(self, lista_balas):
         self.rect.y += self.velocidad
